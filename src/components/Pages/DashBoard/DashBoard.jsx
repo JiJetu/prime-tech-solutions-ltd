@@ -12,7 +12,7 @@ const DashBoard = () => {
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(0);
     const [count, setCount] = useState(0);
-    const [filterData, setFilterData] = useState({ 'category': '', 'brand': '' })
+    const [filterData, setFilterData] = useState({ 'category': '', 'brand': '', 'price': 2000, 'ratting': 5 })
 
 
     const numberOfPages = Math.ceil(parseInt(count) / productsPerPage);
@@ -55,11 +55,21 @@ const DashBoard = () => {
         }
     }
 
+    // set product type; [ex: category: 'smartphone' || brand: 'apple']
+    const handleFilterProduct = (type, e) => {
+        const value = e.target.value;
+
+        setFilterData(prev => ({
+            ...prev,
+            [type]: value,
+        }));
+    };
+
     // filtering data
     useEffect(() => {
         let filteredProducts = originalProducts;
 
-        if(filterData.category==='' && filterData.category===''){
+        if (filterData.category === '' && filterData.category === '' && filterData.price === 2000 && filterData.ratting === 5) {
             setCount(originalProducts.length)
         }
 
@@ -73,26 +83,27 @@ const DashBoard = () => {
                 product.brand.toLowerCase() === filterData.brand.toLowerCase());
         }
 
+        if (filterData.price) {
+            filteredProducts = filteredProducts.filter(product => product.price <= filterData.price)
+        }
+
+        if(filterData.ratting){
+            filteredProducts = filteredProducts.filter(product => product.rating <= filterData.ratting)
+        }
+
+        // paginate
         const start = currentPage * productsPerPage;
         const paginatedProducts = filteredProducts.slice(start, start + productsPerPage);
 
         setProducts(paginatedProducts);
-        
+
         // Use filteredProducts.length for pagination count only if both filters are applied
-        if (filterData.category || filterData.brand) {
+        if (filterData.category || filterData.brand || filterData.price) {
             setCount(filteredProducts.length);
         }
 
-    }, [filterData, originalProducts, currentPage, productsPerPage]);
+    }, [filterData, originalProducts, currentPage, productsPerPage, setFilterData]);
 
-    // set product type; [ex: category: 'smartphone' || brand: 'apple']
-    const handleFilterProduct = (type, e) => {
-        const value = e.target.value;
-        setFilterData(prev => ({
-            ...prev,
-            [type]: value,
-        }));
-    };
 
 
     return (
@@ -100,12 +111,18 @@ const DashBoard = () => {
             <div className='w-[20%] space-y-3'>
                 <h2 className='text-3xl text-center p-2'>DashBoard</h2>
                 <div className='space-y-2'>
-                    <p>Price</p>
-                    <input type="range" min={0} max="100" value="40" className="range" />
+                    <p className="flex justify-between items-center">Price <span className="text-lg text-red-600 font-semibold">$ {filterData.price}</span></p>
+                    <input type="range"
+                        onChange={(event) => handleFilterProduct('price', event)}
+                        min={0} max={2000} step={10}
+                        value={filterData.price} className="range range-sm" />
                 </div>
                 <div className='space-y-2'>
-                    <p>Rating</p>
-                    <input type="range" min={0} max="100" value="100" className="range" />
+                    <p className="flex justify-between items-center">Rating <span className="text-lg text-green-600 font-semibold"> {filterData.ratting}</span></p>
+                    <input type="range"
+                        onChange={(event) => handleFilterProduct('ratting', event)}
+                        min={0} max={5} step={0.2}
+                        value={filterData.ratting} className="range range-success range-sm" />
                 </div>
                 <div className='space-y-2'>
                     <p>Category</p>
@@ -158,6 +175,12 @@ const DashBoard = () => {
                         <option value="50">50</option>
                     </select>
                 </div>
+
+                {
+                    products.length == 0 &&
+                    <p className="text-3xl text-center mt-7">nothing found</p>
+                }
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {
                         products.map(product => (
