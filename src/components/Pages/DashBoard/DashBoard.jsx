@@ -98,7 +98,7 @@ const DashBoard = () => {
         setProducts(paginatedProducts);
 
         // Use filteredProducts.length for pagination count only if both filters are applied
-        if (filterData.category || filterData.brand || filterData.price) {
+        if (filterData.category || filterData.brand || filterData.price || filterData.ratting) {
             setCount(filteredProducts.length);
         }
 

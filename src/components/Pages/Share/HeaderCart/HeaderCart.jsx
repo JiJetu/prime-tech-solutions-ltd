@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const HeaderCart = () => {
 
-    const { addedProducts, totalPriceWithDiscount, singleProductWithDiscount } = useContext(CartContext);
+    const { addedProducts, totalPriceWithDiscount } = useContext(CartContext);
 
 
     return (
@@ -17,7 +17,7 @@ const HeaderCart = () => {
                             addedProducts.map((addedProduct, index) => (
                                 <div key={index}>
                                     <h2 className='text-blue-400'>{addedProduct.title}</h2>
-                                    <p>{addedProduct.quantity}x{(singleProductWithDiscount).toFixed(2)} (<span className='text-red-600'>with discount</span>)</p>
+                                    <p>{addedProduct.quantity}x{(parseFloat(addedProduct.price) * (1 - parseInt(addedProduct.discountPercentage) / 100)).toFixed(2)} (<span className='text-red-600'>with discount</span>)</p>
                                 </div>
                             ))
                         }

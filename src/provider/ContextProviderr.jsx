@@ -5,6 +5,7 @@ export const CartContext = createContext();
 
 const ContextProviderr = ({ children }) => {
     const [addedProducts, setAddedProducts] = useState([]);
+    
 
     const handleAddToCart = (productToAdd) => {
         const productExists = addedProducts.find(product => product.id === productToAdd.id);
@@ -40,12 +41,14 @@ const ContextProviderr = ({ children }) => {
                     product.id === productToAdd.id ? { ...product, quantity: newQuantity } : product
                 );
                 setAddedProducts(updatedProducts);
+                dispatch(addCart(updatedProducts))
             } else {
                 alert("Insufficient stock available.");
             }
         } else {
             if (quantity <= productToAdd.stock) {
                 setAddedProducts([...addedProducts, { ...productToAdd, quantity }]);
+                dispatch(addCart(addedProducts))
             } else {
                 alert("Insufficient stock available.");
             }
@@ -53,18 +56,6 @@ const ContextProviderr = ({ children }) => {
     };
 
 
-    let singleProductWithDiscount = 0;
-
-    for (const addedProduct of addedProducts) {
-        const price = parseFloat(addedProduct.price);
-        const discountPercentage = parseInt(addedProduct.discountPercentage);
-
-        if (!isNaN(price) && !isNaN(discountPercentage)) {
-             singleProductWithDiscount += price * (1 - discountPercentage / 100);
-        } else {
-            console.error('Invalid price or discount percentage:', addedProduct);
-        }
-    }
 
 
 
@@ -78,7 +69,6 @@ const ContextProviderr = ({ children }) => {
         handleAddToCart,
         handleAddMultipleToCart,
         totalPriceWithDiscount,
-        singleProductWithDiscount
     }
 
     return (

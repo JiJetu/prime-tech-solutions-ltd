@@ -42,6 +42,9 @@ const Carts = () => {
                                 </tr>
                             ))
                         }
+                        <tr>
+                            <td><button>Update</button></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
